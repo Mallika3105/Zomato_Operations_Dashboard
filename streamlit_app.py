@@ -23,6 +23,11 @@ if selected_city:
 if selected_cuisine:
     filtered_df = filtered_df[filtered_df['Preferred_Cuisine'].isin(selected_cuisine)]
 
+# 🚫 Stop further execution if no data after filtering
+if filtered_df.empty:
+    st.warning("⚠️ No matching data found for this city and cuisine combination.")
+    st.stop()
+
 # ✅ Safe KPI Cards to handle empty filtered_df or NaNs
 col1, col2, col3, col4 = st.columns(4)
 
