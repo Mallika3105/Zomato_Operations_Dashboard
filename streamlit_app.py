@@ -23,12 +23,34 @@ if selected_city:
 if selected_cuisine:
     filtered_df = filtered_df[filtered_df['Preferred_Cuisine'].isin(selected_cuisine)]
 
-# KPI Cards
+# ✅ Safe KPI Cards to handle empty filtered_df or NaNs
 col1, col2, col3, col4 = st.columns(4)
-col1.metric("👥 Total Subscribers", f"{filtered_df['Subscribers'].sum():,}")
-col2.metric("🍱 Avg Meals/Day", f"{int(filtered_df['Avg_Meals_Delivered/Day'].mean()):,}")
-col3.metric("⏱️ Avg Delivery Time (min)", f"{filtered_df['Avg_Delivery_Time_Min'].mean():.1f}")
-col4.metric("💰 Daily Revenue", f"₹ {filtered_df['Daily_Revenue_₹'].sum():,}")
+
+# Total Subscribers
+if not filtered_df.empty:
+    col1.metric("👥 Total Subscribers", f"{filtered_df['Subscribers'].sum():,}")
+else:
+    col1.metric("👥 Total Subscribers", "N/A")
+
+# Avg Meals/Day
+if not filtered_df.empty and pd.notna(filtered_df['Avg_Meals_Delivered/Day'].mean()):
+    avg_meals = filtered_df['Avg_Meals_Delivered/Day'].mean()
+    col2.metric("🍱 Avg Meals/Day", f"{int(avg_meals):,}")
+else:
+    col2.metric("🍱 Avg Meals/Day", "N/A")
+    st.warning("⚠️ No data available for this city and cuisine combination.")
+
+# Avg Delivery Time
+if not filtered_df.empty and pd.notna(filtered_df['Avg_Delivery_Time_Min'].mean()):
+    col3.metric("⏱️ Avg Delivery Time (min)", f"{filtered_df['Avg_Delivery_Time_Min'].mean():.1f}")
+else:
+    col3.metric("⏱️ Avg Delivery Time (min)", "N/A")
+
+# Daily Revenue
+if not filtered_df.empty:
+    col4.metric("💰 Daily Revenue", f"₹ {filtered_df['Daily_Revenue_₹'].sum():,}")
+else:
+    col4.metric("💰 Daily Revenue", "N/A")
 
 # Data Table
 st.subheader("📍 Zone-wise Operational Overview")
